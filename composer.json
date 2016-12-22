@@ -1,0 +1,33 @@
+{
+    "name": "Drill",
+    "description": "A ",
+    "keywords": [
+        "Drill",
+        "database",
+        "data exploration",
+        "data analysis",
+        "views"
+    ],
+    "homepage": "http://platesphp.com",
+    "license": "Apache 2.0",
+    "authors" : [
+        {
+            "name": "Charles Givre",
+            "email": "cgivre@thedataist.com",
+            "role": "Developer"
+        }
+    ],
+    "require" : {
+        "php": "^5.3 | ^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0",
+        "mikey179/vfsStream": "~1.4.0",
+        "squizlabs/php_codesniffer": "~1.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Drill\\": "src"
+        }
+    }
+}
