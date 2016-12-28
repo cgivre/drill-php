@@ -1,5 +1,5 @@
 <?
-    namespace Drill\Drill;
+    namespace thedataist\Drill;
 
     /**
     * @package Drill

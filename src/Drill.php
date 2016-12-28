@@ -1,6 +1,6 @@
 <?
-    namespace Drill\Drill;
-    use Drill\Drill\Result;
+    namespace thedataist\Drill;
+    use thedataist\Drill\Result;
     include( "Result.php");
 
     /**
