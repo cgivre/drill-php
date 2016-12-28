@@ -1,33 +1,39 @@
 {
-    "name": "Drill",
-    "description": "A ",
+    "name": "Drill/Drill",
+    "description": "Objects that allow you to programmatically connect to Apache Drill.",
     "keywords": [
         "Drill",
         "database",
         "data exploration",
         "data analysis",
-        "views"
+        "views",
+        "Apache Drill",
+        "Big Data",
+        "Data Science",
+        "SQL"
     ],
-    "homepage": "http://platesphp.com",
+    "homepage": "http://thedataist.com",
     "license": "Apache 2.0",
     "authors" : [
         {
             "name": "Charles Givre",
-            "email": "cgivre@thedataist.com",
-            "role": "Developer"
+            "email": "cgivre@thedataist.com"
         }
     ],
     "require" : {
         "php": "^5.3 | ^7.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.0",
-        "mikey179/vfsStream": "~1.4.0",
-        "squizlabs/php_codesniffer": "~1.5"
+        "phpunit/phpunit": "~4.0"
     },
+    "repositories" : [{
+      "type": "vcs",
+      "url": "https://github.com/cgivre/drill-php"
+      }
+    ],
     "autoload": {
-        "psr-4": {
-            "Drill\\": "src"
-        }
+      "classmap": [
+            "src/"
+        ]
     }
 }

@@ -1,5 +1,5 @@
 <?
-    namespace Drill;
+    namespace Drill\Drill;
 
     /**
     * @package Drill
@@ -65,7 +65,7 @@
         }
 
         function num_rows(){
-          return count( $this->rows);
+          return count( $this->rows );
         }
     }
 
