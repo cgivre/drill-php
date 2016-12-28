@@ -1,7 +1,7 @@
 <?
     namespace thedataist\Drill;
     use thedataist\Drill\Result;
-    include( "Result.php");
+
 
     /**
     * @package Drill
@@ -204,26 +204,5 @@
         }
 
     }
-
-    $d = new DrillConnection( 'localhost', 8047 );
-    $result = $d->query( "SELECT * FROM dfs.test.`Tuition.csvh` LIMIT 10" );
-    if( ! $result ) {
-        print( $d->error_message() );
-    }
-    else{
-      $fieldcount = $result->field_count();
-      print( "Fields: $fieldcount\n" );
-    }
-    /*
-    while( $row = $result->fetch_object() )
-    {
-      print( "$row->Family\n" );
-    }*/
-
-    print_r( $d->get_all_storage_plugins() );
-    $d->enable_plugin("mongo");
-    print_r( $d->get_enabled_storage_plugins());
-    $d->disable_plugin("mongo");
-    print_r( $d->get_enabled_storage_plugins());
 
 ?>

@@ -32,8 +32,7 @@
       }
     ],
     "autoload": {
-      "classmap": [
-            "src/"
-        ]
+      "psr-4": { "thedataist\\Drill\\": "src/" },
+      "classmap": ["src/"]
     }
 }
