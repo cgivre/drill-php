@@ -78,6 +78,22 @@
         }
 
         /**
+        * This function returns an array of storage plugins which are disabled.
+        *
+        * @return array The list of disabled storage plugins, empty array if none
+        */
+        function get_enabled_storage_plugins() {
+          $plugin_info = $this->get_storage_plugins();
+          $disabled_plugins = [];
+          foreach ($plugin_info as $plugin) {
+            if( $plugin['config']['enabled'] == 0 ){
+              array_push( $disabled_plugins, $plugin['name']);
+            }
+          }
+          return $disabled_plugins;
+        }
+
+        /**
         * This function returns an array of storage plugins which are enabled.
         *
         * @return array The list of enabled storage plugins, empty array if none

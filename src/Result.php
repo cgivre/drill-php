@@ -64,6 +64,10 @@
           return count( $this->columns );
         }
 
+        function more_results(){
+          return $this->row_pointer < count( $this->rows );
+        }
+
         function num_rows(){
           return count( $this->rows );
         }
