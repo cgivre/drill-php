@@ -82,7 +82,7 @@
         *
         * @return array The list of disabled storage plugins, empty array if none
         */
-        function get_enabled_storage_plugins() {
+        function get_disabled_storage_plugins() {
           $plugin_info = $this->get_storage_plugins();
           $disabled_plugins = [];
           foreach ($plugin_info as $plugin) {
@@ -153,7 +153,6 @@
                 return false;
             }
         }
-
 
         /**
         * This function executes a Drill query.  The function returns true if the query executed successfully, false if not.
