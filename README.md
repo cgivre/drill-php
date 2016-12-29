@@ -32,7 +32,7 @@ Now that you've connected to Drill, you can query drill in much a similar way as
 * **`fetch_assoc()`**:  Returns a single query row as an associative array.
 * **`fetch_object()`**:  Returns a single row as a PHP Object.
 
-You might also 
+You might also find these functions useful:
 * **`data_seek($n)`**: Returns the row at index `$n` and sets the current row to `$n`. 
 * **`num_rows()`**: Returns the number of rows returned by the query.
 * **`field_count()`**:  Returns the number of columns returned by the query.
