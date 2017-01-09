@@ -14,7 +14,7 @@ composer require thedataist/drill-connector
 The first step is to connect to Drill.  The module uses Drill's RESTful interface, so it doesn't really make a "connection" in the same sense as MySQL.  
 
 ```php
-  $drill = = new DrillConnection( 'localhost', 8047 );
+  $drill = new DrillConnection( 'localhost', 8047 );
 ```
 
 As mentioned earlier, this creates the object, but doesn't actually send anything to Drill. You can use the `is_active()` menthod to verify that your connection is active.
