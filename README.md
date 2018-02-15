@@ -26,7 +26,7 @@ As mentioned earlier, this creates the object, but doesn't actually send anythin
   }
 ```
 
-##Querying Drill
+## Querying Drill
 Now that you've connected to Drill, you can query drill in much a similar way as MySQL by calling the `query()` method. Once you've called the `query()` method, you can use one of the `fetch()` methods to retrieve the results, in a similar manner as MySQL.  Currently the Drill connector currently has:
 * **`fetch_all()`**:  Returns all query results in an associative array.
 * **`fetch_assoc()`**:  Returns a single query row as an associative array.
@@ -45,7 +45,7 @@ while( $row = $query_result->fetch_assoc() ) {
   print( "Field 2: {$row['field2']}\n" );
 }
 ```
-##Interacting with Drill
+## Interacting with Drill
 You can also use the connector to activate/deactivate Drill's storage as well as get information about Drill's plugins.
 
 * **`disable_plugin( $plugin )`**  Disables the given plugin.  Returns true if successful, false if not.
