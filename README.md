@@ -4,13 +4,13 @@
 
 This library allows you to connect to and query Apache Drill programmatically.  It is loosely modeled after PHP's mysql interface, so if you are familiar with that, you already pretty much know how to use the Drill connector.
 
-##Installing the Connector
+## Installing the Connector
 The connector is on the Packageist (https://packagist.org/packages/thedataist/drill-connector) and can be installed by using composer as follows:
 ```
 composer require thedataist/drill-connector
 ```
 
-##Using the Connector
+## Using the Connector
 The first step is to connect to Drill.  The module uses Drill's RESTful interface, so it doesn't really make a "connection" in the same sense as MySQL.  
 
 ```php
