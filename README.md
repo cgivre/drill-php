@@ -5,7 +5,7 @@ This library allows you to connect to and query Apache Drill programmatically.  
 ## Installing the Connector
 The connector is on the Packageist (https://packagist.org/packages/thedataist/drill-connector) and can be installed by using composer as follows:
 ```
-composer require thedataist/drill-connector
+composer require thedataist/drill-connector:dev-master
 ```
 
 ## Using the Connector
