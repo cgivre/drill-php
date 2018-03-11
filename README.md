@@ -1,7 +1,5 @@
 # PHP Library to Connect to Apache Drill.
 
-**ALPHA VERSION:  NOT FOR PRODUCTION USE YET**
-
 This library allows you to connect to and query Apache Drill programmatically.  It is loosely modeled after PHP's mysql interface, so if you are familiar with that, you already pretty much know how to use the Drill connector.
 
 ## Installing the Connector
