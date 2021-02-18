@@ -1,5 +1,5 @@
 {
-    "name": "thedataist/drill-connector",
+    "name": "thedataist/drillconnector",
     "description": "Objects that allow you to programmatically connect to Apache Drill.",
     "keywords": [
         "Drill",
@@ -20,10 +20,6 @@
             "email": "cgivre@thedataist.com"
         }
     ],
-    "require" : {
-        "php": "^5.3 | ^7.0",
-        "thedataist/drill-connector": "dev-master"
-    },
     "require-dev": {
         "phpunit/phpunit": "~4.0"
     },
