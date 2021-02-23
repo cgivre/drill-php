@@ -1,5 +1,5 @@
 {
-    "name": "thedataist/drillconnector",
+    "name": "thedataist/drill-connector",
     "description": "Objects that allow you to programmatically connect to Apache Drill.",
     "keywords": [
         "Drill",
