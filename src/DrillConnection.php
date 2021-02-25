@@ -296,6 +296,7 @@ class DrillConnection {
 			return null;
 		}
 
+		// TODO: strip tables as well.
 		foreach ($raw_results as $result) {
 			$schema = $result['SCHEMA_NAME'];
 			if ($schema != 'cp.default' &&
@@ -379,14 +380,18 @@ class DrillConnection {
 	 * workspace.  For a relational database, this corresponds to the list
 	 * of tables in the database.
 	 *
+	 * @param string $plugin The plain text name of the storage plugin.
 	 * @param string $schema The input schema
 	 *
 	 * @return array List of table names
 	 */
-	function get_table_names(string $schema): array {
+	function get_table_names(string $plugin, string $schema): array {
+		$clean_plugin = str_replace('`', '', $plugin);
 		$clean_schema = str_replace('`', '', $schema);
-		$plugin_type = $this->get_plugin_type($clean_schema);
+		$plugin_type = $this->get_plugin_type($clean_plugin);
 		$table_names = array();
+
+		$clean_schema = $clean_plugin . '.' . $clean_schema;
 
 		if ($plugin_type === 'file') {
 			$sql = "SELECT FILE_NAME FROM information_schema.`files` WHERE SCHEMA_NAME = '$clean_schema' AND IS_FILE = true";

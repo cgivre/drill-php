@@ -10,10 +10,8 @@ use thedataist\Drill\Result;
 
 class DrillTest extends TestCase {
 	
-//	protected $host = 'localhost';
-//	protected $port = 8047;
-	protected $host = 'drill.datadistillr.io';
-	protected $port = 443;
+	protected $host = 'localhost';
+	protected $port = 8047;
 	protected $username = '';
 	protected $password = '';
 	protected $ssl = true;
@@ -83,7 +81,7 @@ class DrillTest extends TestCase {
 
 	public function testGetTableNames() {
 		$d = new DrillConnection($this->host, $this->port, $this->username, $this->password, $this->ssl, $this->row_limit);
-		print_r($d->get_table_names("dfs.test"));
+		print_r($d->get_table_names('dfs', 'test'));
 		$this->assertTrue(true);
 	}
 
