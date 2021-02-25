@@ -422,6 +422,25 @@ class DrillConnection {
 		return $table_names;
 	}
 
+
+	/**
+	 * Retrieves an array of tables names
+	 *
+	 * @param string $plugin The plain text name of the storage plugin.
+	 * @param string $schema The input schema
+	 *
+	 * @return Table[] List of tables. Empty array if there are none
+	 */
+	function get_tables(string $plugin, string $schema): array {
+		$tables = array();
+
+		foreach($this->get_table_names($plugin, $schema) as $table_name) {
+			$tables[] = new namespace\Table(['name'=>$table_name, 'schema'=>$schema]);
+		}
+
+		return $tables;
+	}
+
 	/**
 	 * Identify plugin type
 	 *
