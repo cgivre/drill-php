@@ -559,10 +559,10 @@ class DrillConnection {
 			$sql = "DESCRIBE {$quoted_schema}";
 		}
 
-		$result = $this->query($sql)->fetch_object();
+		$result = $this->query($sql)->fetch_all();
 
 		$columns = array();
-		foreach($result->rows as $row) {
+		foreach($result as $row) {
 			$data = array(
 				'plugin' => $plugin,
 				'schema' => $schema,

@@ -74,4 +74,24 @@ class Column {
 			$this->is_nullable = $data->is_nullable === true || $data->is_nullable === 'YES';
 		}
 	}
+
+	/**
+	 * Magic method setter
+	 *
+	 * @param string $name Property name
+	 * @param mixed $value property value
+	 */
+	public function __set(string $name, $value): void {
+		$this->$name = $value;
+	}
+
+	/**
+	 * Magic method getter
+	 *
+	 * @param string $name Property Name
+	 * @return mixed Property Value
+	 */
+	public function __get(string $name) {
+		return $this->$name;
+	}
 }
