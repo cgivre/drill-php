@@ -374,7 +374,7 @@ class DrillConnection {
 	/**
 	 * Retrieves an organized/tree listing of schema names
 	 *
-	 * @return ?Project[] An organized list of schema names
+	 * @return ?Schema[] An organized list of schema names
 	 */
 	public function get_schema(): ?array {
 		$nameList = $this->get_schema_names();
