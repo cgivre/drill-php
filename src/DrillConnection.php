@@ -111,6 +111,49 @@ class DrillConnection {
 	// region Query Methods
 
 	/**
+	 * Checks if the connection is active.
+	 *
+	 * @return bool Returns true if the connection to Drill is active, false if not.
+	 */
+	public function is_active(): bool {
+		$protocol = $this->ssl ? 'https://' : 'http://';
+
+		$result = @get_headers($protocol.$this->hostname.':'.$this->port);
+
+		return isset($result[1]);
+	}
+
+	/**
+	 * Executes a Drill query.
+	 *
+	 * @param string $query The query to run/execute
+	 *
+	 * @return ?Result Returns Result object if the query executed successfully, null otherwise.
+	 */
+	function query(string $query): ?Result {
+
+		$url = $this->build_url('query');
+
+		$postData = array(
+			'queryType' => 'SQL',
+			'query' => $query,
+			'autoLimit' => $this->row_limit
+		);
+
+		$response = $this->post_request($url, $postData);
+
+		if (isset($response['errorMessage'])) {
+			$this->error_message = $response['errorMessage'];
+			return null;
+		} else {
+			return new namespace\Result($response, $query);
+		}
+
+	}
+
+	// region Plugin Methods
+
+	/**
 	 * Retrieves a list of enabled storage plugins.
 	 *
 	 * @return array A list of enabled storage plugins. Empty array if none.
@@ -131,16 +174,30 @@ class DrillConnection {
 	}
 
 	/**
-	 * Checks if the connection is active.
+	 * Identify plugin type
 	 *
-	 * @return bool Returns true if the connection to Drill is active, false if not.
+	 * @param ?string $plugin Plugin name
+	 *
+	 * @return ?string The plugin type, or null on error
 	 */
-	public function is_active(): bool {
-		$protocol = $this->ssl ? 'https://' : 'http://';
+	function get_plugin_type(?string $plugin): ?string {
+		if (! isset($plugin) || !$this->is_active()) {
+			return null;
+		}
 
-		$result = @get_headers($protocol.$this->hostname.':'.$this->port);
+		// Remove back ticks
+		$plugin = str_replace("`", "", $plugin);
 
-		return isset($result[1]);
+		$query = "SELECT SCHEMA_NAME, TYPE FROM INFORMATION_SCHEMA.`SCHEMATA` WHERE SCHEMA_NAME LIKE '%$plugin%' LIMIT 1";
+
+		// Should only be one row
+		$info = $this->query($query)->fetch_assoc();
+
+		if (! isset($info)) {
+			return null;
+		}
+
+		return strtolower($info['TYPE']);
 	}
 
 	/**
@@ -277,6 +334,9 @@ class DrillConnection {
 		return $this->get_request($url);
 	}
 
+	// endregion
+
+	// region Schema Methods
 	/**
 	 * Retrieves list of enabled schemata names
 	 *
@@ -343,35 +403,9 @@ class DrillConnection {
 
 		return $schemata;
 	}
+	// endregion
 
-
-	/**
-	 * Executes a Drill query.
-	 *
-	 * @param string $query The query to run/execute
-	 *
-	 * @return ?Result Returns Result object if the query executed successfully, null otherwise.
-	 */
-	function query(string $query): ?Result {
-
-		$url = $this->build_url('query');
-
-		$postData = array(
-			'queryType' => 'SQL',
-			'query' => $query,
-			'autoLimit' => $this->row_limit
-		);
-
-		$response = $this->post_request($url, $postData);
-
-		if (isset($response['errorMessage'])) {
-			$this->error_message = $response['errorMessage'];
-			return null;
-		} else {
-			return new namespace\Result($response, $query);
-		}
-
-	}
+	// region Table Methods
 
 	/**
 	 * Retrieves a list of Drill tables which exist in a Drill schema.
@@ -442,32 +476,31 @@ class DrillConnection {
 	}
 
 	/**
-	 * Identify plugin type
+	 * Retrieve the View Names
 	 *
-	 * @param ?string $plugin Plugin name
+	 * @param string $plugin Plugin/Datasource to retrieve view names from
+	 * @param string $schema Schema to retrieve view names from
 	 *
-	 * @return ?string The plugin type, or null on error
+	 * @return ?array List of names or null if error
 	 */
-	function get_plugin_type(?string $plugin): ?string {
-		if (! isset($plugin) || !$this->is_active()) {
+	function get_view_names(string $plugin, string $schema): ?array {
+		if (!$this->is_active()) {
 			return null;
 		}
 
-		// Remove back ticks
-		$plugin = str_replace("`", "", $plugin);
+		$view_names = array();
+		$sql = "SELECT `TABLE_NAME` FROM INFORMATION_SCHEMA.views WHERE table_schema='{$plugin}.{$schema}'";
+		$results = $this->query($sql)->fetch_all();
 
-		$query = "SELECT SCHEMA_NAME, TYPE FROM INFORMATION_SCHEMA.`SCHEMATA` WHERE SCHEMA_NAME LIKE '%$plugin%' LIMIT 1";
-
-		// Should only be one row
-		$info = $this->query($query)->fetch_assoc();
-
-		if (! isset($info)) {
-			return null;
+		foreach ($results as $result) {
+			$view_names[] = $result['TABLE_NAME'];
 		}
-
-		return strtolower($info['TYPE']);
+		return $view_names;
 	}
 
+	// endregion
+
+	// region Column Methods
 	/**
 	 * Retrieves the columns present in a given data source.
 	 *
@@ -477,36 +510,37 @@ class DrillConnection {
 	 *
 	 * If the data is a database, we can use the DESCRIBE TABLE command to access schema information.
 	 *
+	 * @param string $plugin The plugin name
+	 * @param string $schema The schema name
 	 * @param string $table_name The table or file name
-	 * @param string $schema The schema or plugin name
 	 *
 	 * @return array List of columns present
 	 */
-	function get_columns(string $table_name, string $schema): array {
+	function get_columns(string $plugin, string $schema, string $table_name): array {
 
-		$plugin_type = $this->get_plugin_type($schema);
+		$plugin_type = $this->get_plugin_type($plugin);
 
 		// Since MongoDB uses the ** notation, bypass that and query the data directly
 		// TODO: Add API functionality here as well
-		if ($plugin_type === 'file' or $plugin_type === 'mongo' or $plugin_type === 'splunk') {
+		if ($plugin_type === 'file' || $plugin_type === 'mongo' || $plugin_type === 'splunk') {
 
-			$views = $this->get_view_names($schema);
+			$views = $this->get_view_names($plugin, $schema);
 
-			$file_name = "$schema.$table_name";
+			$file_name = "{$plugin}.{$schema}.{$table_name}";
 
 			if ($plugin_type === 'mongo') {
 				$mongo_quoted_file_name = $this->format_drill_table($file_name, false);
-				$sql = "SELECT ** FROM $mongo_quoted_file_name LIMIT 1";
+				$sql = "SELECT ** FROM {$mongo_quoted_file_name} LIMIT 1";
 			} else if (in_array($table_name, $views)) {
-				$view_name = "`$schema`.`$table_name`";
-				$sql = "SELECT * FROM $view_name LIMIT 1";
+				$view_name = "`{$plugin}.{$schema}`.`{$table_name}`"; // NOTE: escape char ` may need to go around plugin and schema separately
+				$sql = "SELECT * FROM {$view_name} LIMIT 1";
 			} else if ($plugin_type === 'splunk') {
 				// Case for Splunk
 				$splunk_quoted_file_name = $this->format_drill_table($file_name, false);
-				$sql = "SELECT * FROM $splunk_quoted_file_name LIMIT 1";
+				$sql = "SELECT * FROM {$splunk_quoted_file_name} LIMIT 1";
 			} else {
 				$quoted_file_name = $this->format_drill_table($file_name, true);
-				$sql = "SELECT * FROM $quoted_file_name LIMIT 1";
+				$sql = "SELECT * FROM {$quoted_file_name} LIMIT 1";
 			}
 
 			return $this->query($sql)->get_schema();
@@ -514,40 +548,19 @@ class DrillConnection {
 //		} else if (str_contains($table_name, "SELECT")) { // replaced with regex, str_contains is >=PHP8.0
 		} else if (preg_match('/SELECT/', $table_name)) {
 
-			$sql = "SELECT * FROM $table_name LIMIT 1";
+			$sql = "SELECT * FROM {$table_name} LIMIT 1";
 
 		} else {
 			/*
 			 * Case for everything else.
 			 */
-			$quoted_schema = $this->format_drill_table($schema.$table_name, false);
-			$sql = "DESCRIBE $quoted_schema";
+			$quoted_schema = $this->format_drill_table("{$plugin}.{$schema}.{$table_name}", false);
+			$sql = "DESCRIBE {$quoted_schema}";
 		}
 
 		return $this->query($sql)->get_schema();
 	}
-
-	/**
-	 * Retrieve the View Names
-	 *
-	 * @param string $schema Schema to retrieve view names from
-	 *
-	 * @return ?array List of names or null if error
-	 */
-	function get_view_names(string $schema): ?array {
-		if (!$this->is_active()) {
-			return null;
-		}
-
-		$view_names = array();
-		$sql = "SELECT `TABLE_NAME` FROM INFORMATION_SCHEMA.views WHERE table_schema='$schema'";
-		$results = $this->query($sql)->fetch_all();
-
-		foreach ($results as $result) {
-			$view_names[] = $result['TABLE_NAME'];
-		}
-		return $view_names;
-	}
+	// endregion
 
 	// endregion
 
