@@ -154,26 +154,6 @@ class DrillConnection {
 	// region Plugin Methods
 
 	/**
-	 * Retrieves a list of enabled storage plugins.
-	 *
-	 * @return array A list of enabled storage plugins. Empty array if none.
-	 */
-	public function get_enabled_storage_plugins(): array {
-		if (! $this->is_active()) {
-			return array();
-		}
-		$plugin_info = $this->get_storage_plugins();
-		$enabled_plugins = [];
-		foreach ($plugin_info as $plugin) {
-			if ($plugin['config']['enabled'] == 1) {
-				array_push($enabled_plugins, $plugin['name']);
-			}
-		}
-		$this->cached_enabled_plugins = $enabled_plugins;
-		return $enabled_plugins;
-	}
-
-	/**
 	 * Identify plugin type
 	 *
 	 * @param ?string $plugin Plugin name
@@ -266,8 +246,28 @@ class DrillConnection {
 	 */
 	function get_storage_plugins(): array {
 
-		$url = $this->build_url("storage");
+		$url = $this->build_url('storage');
 		return $this->get_request($url);
+	}
+
+	/**
+	 * Retrieves a list of enabled storage plugins.
+	 *
+	 * @return array A list of enabled storage plugins. Empty array if none.
+	 */
+	public function get_enabled_storage_plugins(): array {
+		if (! $this->is_active()) {
+			return array();
+		}
+		$plugin_info = $this->get_storage_plugins();
+		$enabled_plugins = [];
+		foreach ($plugin_info as $plugin) {
+			if ($plugin['config']['enabled'] == 1) {
+				array_push($enabled_plugins, $plugin['name']);
+			}
+		}
+		$this->cached_enabled_plugins = $enabled_plugins;
+		return $enabled_plugins;
 	}
 
 	/**
