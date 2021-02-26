@@ -514,7 +514,7 @@ class DrillConnection {
 	 * @param string $schema The schema name
 	 * @param string $table_name The table or file name
 	 *
-	 * @return array List of columns present
+	 * @return Column[] List of columns present
 	 */
 	function get_columns(string $plugin, string $schema, string $table_name): array {
 
@@ -543,6 +543,7 @@ class DrillConnection {
 				$sql = "SELECT * FROM {$quoted_file_name} LIMIT 1";
 			}
 
+			// TODO: process this to return Column[]
 			return $this->query($sql)->get_schema();
 
 //		} else if (str_contains($table_name, "SELECT")) { // replaced with regex, str_contains is >=PHP8.0
@@ -558,7 +559,22 @@ class DrillConnection {
 			$sql = "DESCRIBE {$quoted_schema}";
 		}
 
-		return $this->query($sql)->get_schema();
+		$result = $this->query($sql)->fetch_object();
+
+		$columns = array();
+		foreach($result->rows as $row) {
+			$data = array(
+				'plugin' => $plugin,
+				'schema' => $schema,
+				'table' => $table_name,
+				'name' => $row['COLUMN_NAME'],
+				'data_type' => $row['DATA_TYPE'],
+				'is_nullable' => $row['IS_NULLABLE']
+			);
+
+			$columns[] = new namespace\Column($data);
+		}
+		return $columns;
 	}
 	// endregion
 
