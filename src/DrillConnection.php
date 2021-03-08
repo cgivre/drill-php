@@ -262,7 +262,7 @@ class DrillConnection {
 		$plugin_info = $this->get_storage_plugins();
 		$enabled_plugins = [];
 		foreach ($plugin_info as $plugin) {
-			if ($plugin['config']['enabled']) {
+			if ($plugin['config']['enabled'] == 1) {
 				$enabled_plugins[] = $plugin;
 			}
 		}
