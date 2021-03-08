@@ -262,17 +262,8 @@ class DrillConnection {
 		$plugin_info = $this->get_storage_plugins();
 		$enabled_plugins = [];
 		foreach ($plugin_info as $plugin) {
-			if(isset($plugin['config']['enabled']) && $plugin['config']['enabled'] === true) {
+			if(isset($plugin['config']['enabled']) && $plugin['config']['enabled']) {
 				$enabled_plugins[] = $plugin;
-				log_message('info', 'Enabled as Bool');
-			}
-			elseif (isset($plugin['config']['enabled']) && $plugin['config']['enabled'] === '1') {
-				$enabled_plugins[] = $plugin;
-				log_message('info', 'Enabled as string');
-			}
-			elseif (isset($plugin['config']['enabled']) && $plugin['config']['enabled'] === 1)  {
-				$enabled_plugins[] = $plugin;
-				log_message('info', 'Enabled as int');
 			}
 		}
 		$this->cached_enabled_plugins = $enabled_plugins;
