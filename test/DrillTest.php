@@ -10,11 +10,11 @@ use thedataist\Drill\Result;
 
 class DrillTest extends TestCase {
 	
-	protected $host = 'localhost';
+	protected $host = '10.0.1.113';
 	protected $port = 8047;
 	protected $username = '';
 	protected $password = '';
-	protected $ssl = true;
+	protected $ssl = false;
 	protected $row_limit = 10000;
 	
 	protected $drill = null;
