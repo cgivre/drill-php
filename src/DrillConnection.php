@@ -137,7 +137,10 @@ class DrillConnection {
 		$postData = array(
 			'queryType' => 'SQL',
 			'query' => $query,
-			'autoLimit' => $this->row_limit
+			'autoLimit' => $this->row_limit,
+      'options' => array(
+        'drill.exec.http.rest.errors.verbose' => true
+      )
 		);
 
 		$response = $this->post_request($url, $postData);
