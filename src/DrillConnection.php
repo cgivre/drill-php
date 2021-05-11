@@ -147,7 +147,8 @@ class DrillConnection {
 		$response = $this->post_request($url, $postData);
 
 		if (isset($response['errorMessage'])) {
-			$this->error_message = $response['errorMessage'];
+			$this->errorMessage = $response['errorMessage'];
+			$this->stackTrace = $response['stackTrace'] ?? '';
 			throw new \Exception("Error in query: {$query}");
 		} else {
 			return new Result($response, $query);
