@@ -129,6 +129,7 @@ class DrillConnection {
 	 * @param string $query The query to run/execute
 	 *
 	 * @return ?Result Returns Result object if the query executed successfully, null otherwise.
+	 * @throws \Exception
 	 */
 	function query(string $query): ?Result {
 
@@ -138,18 +139,18 @@ class DrillConnection {
 			'queryType' => 'SQL',
 			'query' => $query,
 			'autoLimit' => $this->row_limit,
-      'options' => array(
-        'drill.exec.http.rest.errors.verbose' => true
-      )
+			'options' => [
+				'drill.exec.http.rest.errors.verbose' => true
+			]
 		);
 
 		$response = $this->post_request($url, $postData);
 
 		if (isset($response['errorMessage'])) {
 			$this->error_message = $response['errorMessage'];
-			return null;
+			throw new \Exception("Error in query: {$query}");
 		} else {
-			return new namespace\Result($response, $query);
+			return new Result($response, $query);
 		}
 
 	}
