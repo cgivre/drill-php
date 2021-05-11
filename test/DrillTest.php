@@ -23,7 +23,6 @@ class DrillTest extends TestCase {
 		$this->drill = new DrillConnection($this->host, $this->port, $this->username, $this->password, $this->ssl, $this->row_limit);
 		$active = $this->drill->is_active();
 		$this->assertEquals(true, $active);
-
 	}
 
 	public function testBadConnection() {
@@ -48,6 +47,14 @@ class DrillTest extends TestCase {
 		$enabledPlugins = $d->get_enabled_storage_plugins();
 		$this->assertEquals(6, count($enabledPlugins));
 	}
+
+	public function testErrorMessage() {
+    $this->drill = new DrillConnection($this->host, $this->port, $this->username, $this->password, $this->ssl, $this->row_limit);
+    $result = $this->drill->query("SELECT CAST('abc' AS INT) FROM (VALUES(1))");
+    $this->assertNotEmpty($this->drill->error_message());
+    $this->assertStringStartsWith("Unexpected exception during fragment initialization",
+      $this->drill->error_message());
+  }
 
 	public function testFormatTable() {
 		$d = new DrillConnection($this->host, $this->port, $this->username, $this->password, $this->ssl, $this->row_limit);
